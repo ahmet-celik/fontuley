@@ -13,7 +13,9 @@ in the future.
 The tools and server in this project will be based on the Python fontTools.
 Currently (June 2014) there is the original/older version of fontTools:
 * http://sourceforge.net/projects/fonttools/
+
 and the newer version
+
 * https://github.com/behdad/fonttools/
 
 This project will start with the newer version.
