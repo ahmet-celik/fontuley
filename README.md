@@ -1,8 +1,13 @@
 Fontuley
 ========
 
-This project is intended to provide some tools to make it easier to inspect
-fonts and modify fonts.
+This project is intended to provide some tools to make it easier to work with
+fonts; eg,
+- inspect fonts
+  -- view the cmap including the tables and segments
+- modify fonts
+  -- subset a font
+  -- convert from ttf to woff
 
 The initial tool will display the table of contents of a TrueType/OpenType font.
 
