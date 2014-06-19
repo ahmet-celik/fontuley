@@ -1,8 +1,8 @@
 Fontuley
 ========
 
-This project is intended to provide some tools for inspecting fonts and 
-modifying fonts.
+This project is intended to provide some tools to make it easier to inspect
+fonts and modify fonts.
 
 The initial tool will display the table of contents of a TrueType/OpenType font.
 
