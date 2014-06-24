@@ -1,0 +1,33 @@
+application: blue-pear
+version: 1
+runtime: python27
+api_version: 1
+
+threadsafe: true
+
+libraries:
+- name: webapp2
+  version: latest
+
+builtins:
+- remote_api: on
+
+handlers:
+- url: /
+  static_files: index.html
+  upload: index.html
+
+- url: /opentype_js
+  static_dir: opentype_js
+
+- url: /css
+  static_dir: css
+
+- url: /font_info\.html
+  script: font_info.font_info.app
+
+- url: /font_info/?
+  script: font_info.font_info.app
+
+#- url: /.*
+#  script: font_tools_server.app
