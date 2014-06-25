@@ -18,16 +18,13 @@ handlers:
   upload: index.html
 
 - url: /opentype_js
-  static_dir: opentype_js
+  static_dir: third_party/opentype_js
 
 - url: /css
   static_dir: css
 
 - url: /font_info\.html
-  script: font_info.font_info.app
+  script: info.font_info.app
 
 - url: /font_info/?
-  script: font_info.font_info.app
-
-#- url: /.*
-#  script: font_tools_server.app
+  script: info.font_info.app
