@@ -2,7 +2,6 @@
 import webapp2
 from fontTools.ttLib import TTFont
 import cgi
-# import StringIO
 import urllib
 
 
