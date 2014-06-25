@@ -12,3 +12,6 @@ table, th, td {
 .td_right {
     text-align: right;
 }
+.td_wrap {
+  word-wrap: break-word;
+}
