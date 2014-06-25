@@ -3,8 +3,9 @@ Fontuley
 
 This project is intended to provide some tools to make it easier to work with
 fonts; eg,
-- inspect fonts
+- inspect fonts; eg,
   - view the cmap including the tables and segments
+  - view the font's license (the name table info)
 - modify fonts
   - subset a font
   - convert from ttf to woff
