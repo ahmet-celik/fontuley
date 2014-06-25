@@ -1,4 +1,5 @@
 
+import binascii
 import webapp2
 import sys, os
 
@@ -31,10 +32,11 @@ class FontInfoMainPage(webapp2.RequestHandler):
                 <br>""")
         self.tables_options()
         self.cmap_options()
+        self.name_table_options()
 
         self.response.out.write("""
                 <br>
-                <input type="submit" value="upload">
+                <input type="submit" value="get info">
                 <hr>
               </form>""")
  
@@ -68,6 +70,13 @@ class FontInfoMainPage(webapp2.RequestHandler):
                 </select>
                 <br>""")
 
+    def name_table_options(self):
+        # license is nameID=13 in the name table
+        self.response.out.write("""
+                name table:
+                <input type="checkbox" name="name_table_checkbox"> 
+                <br>""")
+        pass
 
 class FontInfo(webapp2.RequestHandler):
 
@@ -94,6 +103,7 @@ class FontInfo(webapp2.RequestHandler):
 
         self.response.out.write("""<html>
             <head>
+              <meta charset="UTF-8">
               <link rel="stylesheet" type="text/css" href="css/styles.css">
             </head>
             <body>
@@ -101,6 +111,7 @@ class FontInfo(webapp2.RequestHandler):
 
         self.tables_info(font)
         self.cmap_info(font)
+        self.name_table_info(font)
 
         self.response.out.write('</body></html>')
 
@@ -247,6 +258,140 @@ class FontInfo(webapp2.RequestHandler):
             self.response.out.write('{0} contiguous character segments<br>'.format(len(segments)))
             self.response.out.write('{0} segments required<br>'.format(total_sub_segments))
             self.response.out.write(table_str)
+
+
+    def name_table_info(self, font):
+        name_table_checkbox = self.request.POST.get('name_table_checkbox', None)
+        if not name_table_checkbox:
+            return
+#===============================================================================
+#         cmap_platformID = self.request.POST.get('cmap_platformID', None)
+#         if cmap_platformID == None or cmap_platformID == '':
+#             cmap_platformID = None
+#         else:
+#             cmap_platformID = int(cmap_platformID)
+#             self.response.out.write('only show cmaps for platformID={0}<br><br>'.
+#                                     format(cmap_platformID))
+# 
+#         
+        self.response.out.write("""name table:<br>
+            <table><tr>
+              <th>langID</th>
+              <th>nameID</th>
+              <th>platformID</th>
+              <th>platEncID</th>
+              <th>string</th>
+            </tr>""")
+
+        name_table = font['name']
+        for name in name_table.names:
+            if not name.isUnicode():
+                continue
+            hexstr = name.string
+            if len(hexstr) %2:
+                hexstr += b"\0"
+            utf16str = hexstr.decode('utf-16-be')
+            utf8str = utf16str.encode('UTF-8')
+            self.response.out.write("""<tr>
+                  <td >{0}</td>
+                  <td>{1}</td>
+                  <td>{2}</td>
+                  <td>{3}</td>
+                  <td>{4}</td>
+                </tr>""".format(name.langID,
+                                name.nameID,
+                                name.platformID,
+                                name.platEncID,
+                                utf8str))
+        self.response.out.write('</table><br><br>')
+# 
+#         cmap_segments = self.request.POST.get('cmap_segments', None)
+#         if not cmap_segments:
+#             return
+# 
+#         # Find format 12 character ranges:
+#         # - contiguous code points _and_ contiguous glyph IDs
+#         glyphOrder = font.getGlyphOrder()
+#         for i in range(len(cmap.tables)):
+#             table = cmap.tables[i]
+#             if cmap_platformID != None:
+#                 if table.platformID != cmap_platformID:
+#                     continue
+#             self.response.out.write(
+#                 """cmap: platfromID={0}, encodingID={1}, format={2}<br>"""
+#                 .format(table.platformID, table.platEncID, table.format))
+#             submap = cmap.getcmap(table.platformID, table.platEncID)
+#             items = sorted(submap.cmap.items(), key=lambda item: item[0])
+#             start_code = previous_code = None
+#             start_gid = previous_gid = None
+#             segments = []
+# 
+#             sub_segments = 0
+#             for item in items:
+#                 this_code = item[0]
+#                 this_gid = glyphOrder.index(item[1])
+#                 if start_code == None:
+#                     start_code = previous_code = this_code
+#                     start_gid = previous_gid = this_gid
+#                     continue
+#                 if this_code == previous_code + 1:
+#                     if this_gid != previous_gid + 1:
+#                         sub_segments += 1
+#                     previous_code = this_code
+#                     previous_gid = this_gid
+#                     continue
+#                 sub_segments += 1
+#                 segments.append({'start_code': start_code, 
+#                                  'end_code': previous_code,
+#                                  'start_gid': start_gid,
+#                                  'length': previous_code - start_code + 1,
+#                                  'sub_segments': sub_segments,
+#                                  })
+#                 start_code = previous_code = this_code
+#                 start_gid = previous_gid = this_gid
+#                 sub_segments = 0
+# 
+#             # Close the final range.
+#             if start_code != None:
+#                 sub_segments += 1
+#                 segments.append({'start_code': start_code, 
+#                                  'end_code': previous_code,
+#                                  'start_gid': start_gid,
+#                                  'length': previous_code - start_code + 1,
+#                                  'sub_segments': sub_segments,
+#                                  })
+# 
+# 
+# 
+#             # Display the results.
+#             # Note: we only need a usable format 12 (format 4 can be a dummy)
+#             total_codepoints = 0
+#             total_sub_segments = 0
+#             table_str = """<table><tr>
+#                   <th>start code</th>
+#                   <th>gid</th>
+#                   <th>length</th>
+#                   <th>segments</th>
+#                   <th>Description</th>
+#                 </tr>"""
+#             for segment in segments:
+#                 start_code = segment['start_code']
+#                 length = segment['length']
+#                 total_codepoints += length
+#                 table_str += """<tr>
+#                     <td >0x{0:05X}</td><td>{1}</td><td>{2}</td><td>{3}</td>
+#                     <td style="text-align: left">{4}</td>
+#                     </tr>""".format(
+#                     start_code, segment['start_gid'], length, 
+#                     segment['sub_segments'], 
+#                     get_unicode_name(segment['start_code']))
+#                 total_sub_segments += segment['sub_segments']
+#             table_str += '</table><br><br>'
+#             self.response.out.write('{0} total codepoints<br>'.format(total_codepoints))
+#             self.response.out.write('{0} contiguous character segments<br>'.format(len(segments)))
+#             self.response.out.write('{0} segments required<br>'.format(total_sub_segments))
+#             self.response.out.write(table_str)
+#===============================================================================
 
 
 def get_unicode_name(code):

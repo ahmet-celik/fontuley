@@ -9,6 +9,6 @@ table, th, td {
   padding-right: 5px;
   font-family: monospace;
 }
-td {
+.td_right {
     text-align: right;
 }
