@@ -1,8 +1,11 @@
 
 import webapp2
 import sys, os
+
+# Manually adding the library path seems hacky.
 sys.path.append(os.path.join(os.path.dirname(__file__), '../third_party/fontTools/Lib'))
 from fontTools.ttLib import TTFont
+
 import cgi
 import urllib
 import unicodedata
