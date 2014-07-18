@@ -23,8 +23,15 @@ handlers:
 - url: /css
   static_dir: css
 
+- url: /font_conversion\.html
+  script: conversion.font_conversion.app
+
+- url: /font_conversion/?
+  script: conversion.font_conversion.app
+
 - url: /font_info\.html
   script: info.font_info.app
 
 - url: /font_info/?
   script: info.font_info.app
+ 
