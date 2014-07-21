@@ -28,3 +28,9 @@ handlers:
 
 - url: /font_info/?
   script: info.font_info.app
+  
+- url: /font_compress\.html
+  script: compress.font_compress.app
+
+- url: /font_compress/?
+  script: compress.font_compress.app
